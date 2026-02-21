@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% load naira %}
+{% block title %}{{ property.title }} | EGX PROPERTIES{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+
+    <div class="section-title">
+      <h2>{{ property.title }}</h2>
+      <p>{{ property.location }} • {{ property.get_property_type_display }}</p>
+    </div>
+
+    <div class="detail-grid">
+
+      <!-- Gallery -->
+      <div class="card detail-gallery">
+        {% if property.images.all %}
+          <div class="gallery-main">
+            <img src="{{ property.images.all.0.image.url }}" alt="{{ property.title }}">
+          </div>
+
+          <div class="gallery-thumbs">
+            {% for img in property.images.all %}
+              <img src="{{ img.image.url }}" alt="{{ property.title }}">
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="no-img big">No images uploaded for this property yet.</div>
+        {% endif %}
+      </div>
+
+      <!-- Details -->
+      <div class="card detail-box">
+        <span class="badge status-{{ property.status }}">{{ property.get_status_display }}</span>
+
+        <div class="price big">₦{{ property.price|naira }}</div>
+
+        <div class="detail-meta">
+          {% if property.bedrooms %}<div><b>Bedrooms:</b> {{ property.bedrooms }}</div>{% endif %}
+          {% if property.bathrooms %}<div><b>Bathrooms:</b> {{ property.bathrooms }}</div>{% endif %}
+          {% if property.size_sqft %}<div><b>Size:</b> {{ property.size_sqft }} sqft</div>{% endif %}
+        </div>
+
+        <p class="detail-desc">{{ property.description }}</p>
+
+        <div class="detail-actions">
+          {% with msg="Hello EGX PROPERTIES, I'm interested in "|add:property.title|add:" located at "|add:property.location|add:". Please is it still available?" %}
+            <a class="btn btn-primary"
+               target="_blank"
+               href="https://wa.me/2348146592722?text={{ msg|urlencode }}">
+              WhatsApp Inquiry
+            </a>
+          {% endwith %}
+
+          <!-- ✅ Share Button -->
+          <button class="btn btn-ghost" type="button" id="shareBtn">
+            Share Listing
+          </button>
+
+          <a class="btn btn-ghost" href="{% url 'listings' %}">
+            Back to Listings
+          </a>
+        </div>
+
+        <!-- small feedback text -->
+        <p class="small" id="shareHint" style="margin-top: 10px; display:none;">
+          Link copied ✅
+        </p>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+{% endblock %}

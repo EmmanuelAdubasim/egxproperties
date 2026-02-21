@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% load naira %}
+{% block title %}Listings | EGX PROPERTIES{% endblock %}
+
+{% block content %}
+<section class="section">
+  <div class="container">
+    <div class="section-title">
+      <h2>Property Listings</h2>
+      <p>Search and filter premium properties.</p>
+    </div>
+
+    <!-- Filters -->
+    <form class="card filter-bar" method="get">
+      <input
+        class="filter-input"
+        type="text"
+        name="q"
+        placeholder="Search by title or location..."
+        value="{{ filters.q }}"
+      >
+
+      <select class="filter-input" name="location">
+        <option value="">All Locations</option>
+        {% for loc in locations %}
+          <option value="{{ loc }}" {% if filters.location == loc %}selected{% endif %}>{{ loc }}</option>
+        {% endfor %}
+      </select>
+
+      <select class="filter-input" name="type">
+        <option value="">All Types</option>
+        <option value="APARTMENT" {% if filters.type == "APARTMENT" %}selected{% endif %}>Apartment</option>
+        <option value="DUPLEX" {% if filters.type == "DUPLEX" %}selected{% endif %}>Duplex</option>
+        <option value="BUNGALOW" {% if filters.type == "BUNGALOW" %}selected{% endif %}>Bungalow</option>
+        <option value="LAND" {% if filters.type == "LAND" %}selected{% endif %}>Land</option>
+        <option value="COMMERCIAL" {% if filters.type == "COMMERCIAL" %}selected{% endif %}>Commercial</option>
+      </select>
+
+      <input
+        class="filter-input"
+        type="number"
+        name="beds"
+        placeholder="Min beds"
+        value="{{ filters.beds }}"
+      >
+
+      <input
+        class="filter-input"
+        type="number"
+        name="min_price"
+        placeholder="Min price"
+        value="{{ filters.min_price }}"
+      >
+
+      <input
+        class="filter-input"
+        type="number"
+        name="max_price"
+        placeholder="Max price"
+        value="{{ filters.max_price }}"
+      >
+
+      <button class="btn btn-primary" type="submit">Apply</button>
+      <a class="btn btn-ghost" href="{% url 'listings' %}">Reset</a>
+    </form>
+
+    <div style="height: 14px;"></div>
+
+    {% if properties %}
+      <div class="grid">
+        {% for p in properties %}
+          <a
+            href="{% url 'listing_detail' p.slug %}"
+            class="card property-card property-link {% if p.status == 'SOLD' %}is-sold{% endif %}"
+          >
+            <!-- Cover Image -->
+            <div class="property-img">
+              {% if p.images.all %}
+                <img src="{{ p.images.all.0.image.url }}" alt="{{ p.title }}">
+              {% else %}
+                <div class="no-img">No Image</div>
+              {% endif %}
+            </div>
+
+            <div class="property-body">
+              <span class="badge status-{{ p.status }}">{{ p.get_status_display }}</span>
+              <div class="price">₦{{ p.price|naira }}</div>
+              <div class="prop-title"><b>{{ p.title }}</b></div>
+
+              <div class="small">
+                {{ p.location }} • {{ p.get_property_type_display }}
+                {% if p.bedrooms %} • {{ p.bedrooms }} bed{% endif %}
+                {% if p.bathrooms %} • {{ p.bathrooms }} bath{% endif %}
+              </div>
+            </div>
+          </a>
+        {% endfor %}
+      </div>
+
+      <div style="height: 18px;"></div>
+
+      {% if properties.has_other_pages %}
+        <div class="pagination">
+          {% if properties.has_previous %}
+            <a class="page-btn"
+               href="?{% for k,v in filters.items %}{% if v and k != 'page' %}{{ k }}={{ v|urlencode }}&{% endif %}{% endfor %}page={{ properties.previous_page_number }}">
+              Prev
+            </a>
+          {% endif %}
+
+          <span class="page-info">
+            Page {{ properties.number }} of {{ properties.paginator.num_pages }}
+          </span>
+
+          {% if properties.has_next %}
+            <a class="page-btn"
+               href="?{% for k,v in filters.items %}{% if v and k != 'page' %}{{ k }}={{ v|urlencode }}&{% endif %}{% endfor %}page={{ properties.next_page_number }}">
+              Next
+            </a>
+          {% endif %}
+        </div>
+      {% endif %}
+
+    {% else %}
+      <div class="card property-card">
+        <p class="small">No properties match your filters.</p>
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

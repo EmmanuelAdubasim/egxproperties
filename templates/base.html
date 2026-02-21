@@ -1,0 +1,70 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% block title %}EGX PROPERTIES{% endblock %}</title>
+
+    <meta
+      name="description"
+      content="EGX PROPERTIES helps you discover carefully curated luxury homes and investment properties across Nigeria. Verified listings and fast WhatsApp enquiry."
+    />
+    <meta
+      name="keywords"
+      content="EGX Properties, Nigeria real estate, Lagos homes, luxury property, land for sale, duplex for sale, apartments in Nigeria"
+    />
+    <meta name="author" content="EGX PROPERTIES" />
+
+    <meta property="og:title" content="EGX PROPERTIES" />
+    <meta
+      property="og:description"
+      content="Premium property listings across Nigeria. Browse verified listings and enquire instantly via WhatsApp."
+    />
+    <meta property="og:type" content="website" />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- ✅ Correct static link -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <link rel="icon" href="{% static 'favicon.svg' %}" type="image/svg+xml">
+
+  </head>
+
+  <body>
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href="{% url 'home' %}">
+          <span class="brand-mark">EGX</span>
+          <span class="brand-name">PROPERTIES</span>
+        </a>
+
+        <nav class="nav">
+          <a href="{% url 'home' %}" class="nav-link">Home</a>
+          <a href="{% url 'listings' %}" class="nav-link">Listings</a>
+          <a href="{% url 'about' %}" class="nav-link">About</a>
+          <a href="{% url 'contact' %}" class="nav-link">Contact</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>{% block content %}{% endblock %}</main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <p class="muted">
+          © {% now "Y" %} EGX PROPERTIES. All rights reserved.
+        </p>
+        <p class="muted">Luxury Real Estate • Nigeria</p>
+      </div>
+    </footer>
+
+    <script src="{% static 'js/main.js' %}"></script>
+  </body>
+</html>

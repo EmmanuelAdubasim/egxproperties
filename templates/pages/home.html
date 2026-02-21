@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% load naira %}
+{% block title %}EGX PROPERTIES{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <div class="container hero-grid">
+    <div class="card hero-card">
+      <div class="kicker">Luxury Real Estate</div>
+      <div class="h1">Find premium properties built for comfort, class & value.</div>
+      <p class="lead">
+        EGX PROPERTIES helps you discover carefully curated homes and investment properties across Nigeria.
+        Browse featured listings and connect instantly via WhatsApp.
+      </p>
+
+      <div class="actions">
+        <a class="btn btn-primary" href="{% url 'listings' %}">View Listings</a>
+        <a class="btn btn-ghost" href="/admin/">Admin Dashboard</a>
+      </div>
+    </div>
+
+    <div class="card hero-side">
+      <div class="stat">
+        <b>Verified Listings</b>
+        <span>Premium selection with clear details.</span>
+      </div>
+      <div class="stat">
+        <b>Fast Inquiry</b>
+        <span>WhatsApp message generated in one click.</span>
+      </div>
+      <div class="stat">
+        <b>Luxury UI</b>
+        <span>Modern, clean, and mobile responsive.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-title">
+      <h2>Featured Listings</h2>
+      <p>Hand-picked properties marked as featured from the admin panel.</p>
+    </div>
+
+    {% if featured %}
+      <div class="grid">
+        {% for p in featured %}
+          <a href="{% url 'listing_detail' p.slug %}" class="card property-card property-link">
+            <div class="property-img">
+              {% if p.images.all %}
+                <img src="{{ p.images.all.0.image.url }}" alt="{{ p.title }}">
+              {% else %}
+                <div class="no-img">No Image</div>
+              {% endif %}
+            </div>
+
+            <div class="property-body">
+              <span class="badge status-{{ p.status }}">{{ p.get_status_display }}</span>
+              <div class="price">₦{{ p.price|naira }}</div>
+              <div class="prop-title"><b>{{ p.title }}</b></div>
+              <div class="small">
+                {{ p.location }} • {{ p.get_property_type_display }}
+                {% if p.bedrooms %} • {{ p.bedrooms }} bed{% endif %}
+                {% if p.bathrooms %} • {{ p.bathrooms }} bath{% endif %}
+              </div>
+            </div>
+          </a>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="card property-card">
+        <p class="small">
+          No featured properties yet. Go to <a href="/admin/" style="text-decoration: underline;">Admin</a> and tick “featured” on a property.
+        </p>
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
