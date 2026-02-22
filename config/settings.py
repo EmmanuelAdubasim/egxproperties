@@ -1,16 +1,13 @@
 from pathlib import Path
 import os
 
-# -------------------------------
-# BASE DIRECTORY
-# -------------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# -------------------------------
+# -------------------------
 # SECURITY
-# -------------------------------
-SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-dev-key")
+# -------------------------
+SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-dev-key-change-me")
 
 DEBUG = os.getenv("DEBUG", "True") == "True"
 
@@ -20,9 +17,9 @@ ALLOWED_HOSTS = os.getenv(
 ).split(",")
 
 
-# -------------------------------
-# APPLICATIONS
-# -------------------------------
+# -------------------------
+# APPS
+# -------------------------
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -36,11 +33,15 @@ INSTALLED_APPS = [
 ]
 
 
-# -------------------------------
+# -------------------------
 # MIDDLEWARE
-# -------------------------------
+# -------------------------
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+
+    # ✅ Required for Render static files
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -53,13 +54,13 @@ MIDDLEWARE = [
 ROOT_URLCONF = "config.urls"
 
 
-# -------------------------------
+# -------------------------
 # TEMPLATES
-# -------------------------------
+# -------------------------
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "templates"],
+        "DIRS": [BASE_DIR / "templates"],  # ✅ templates folder
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -76,17 +77,14 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 
 
-# -------------------------------
+# -------------------------
 # DATABASE
-# -------------------------------
+# -------------------------
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 if DATABASE_URL:
     import dj_database_url
-
-    DATABASES = {
-        "default": dj_database_url.parse(DATABASE_URL)
-    }
+    DATABASES = {"default": dj_database_url.parse(DATABASE_URL, conn_max_age=600)}
 else:
     DATABASES = {
         "default": {
@@ -96,9 +94,9 @@ else:
     }
 
 
-# -------------------------------
+# -------------------------
 # PASSWORD VALIDATION
-# -------------------------------
+# -------------------------
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
@@ -107,35 +105,47 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-# -------------------------------
+# -------------------------
 # INTERNATIONALIZATION
-# -------------------------------
+# -------------------------
 LANGUAGE_CODE = "en-us"
 TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
 
 
-# -------------------------------
-# STATIC FILES
-# -------------------------------
+# -------------------------
+# STATIC FILES (CSS/JS)
+# -------------------------
 STATIC_URL = "/static/"
 
+# ✅ Where your source static files live locally
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
+# ✅ Where collectstatic puts files for production (Render)
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
+# ✅ WhiteNoise optimized static serving (fixes “unstyled page”)
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-# -------------------------------
-# MEDIA FILES
-# -------------------------------
+
+# -------------------------
+# MEDIA (Optional local uploads)
+# -------------------------
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 
-# -------------------------------
-# DEFAULT PRIMARY KEY
-# -------------------------------
+# -------------------------
+# DEFAULT PK
+# -------------------------
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+# -------------------------
+# SECURITY HEADERS (Optional but good)
+# -------------------------
+if not DEBUG:
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
