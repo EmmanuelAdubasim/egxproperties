@@ -128,8 +128,7 @@ STATICFILES_DIRS = [
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # ✅ WhiteNoise optimized static serving (fixes “unstyled page”)
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-
+STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
 
 # -------------------------
 # MEDIA (Optional local uploads)
